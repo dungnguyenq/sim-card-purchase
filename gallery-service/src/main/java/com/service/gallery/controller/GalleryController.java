@@ -23,11 +23,8 @@ public class GalleryController {
 
     @GetMapping("/gallery")
     public ResponseEntity getVouchers(@RequestParam(value = "phonenumber", required = true) String phoneNumber){
-        Gallery gallery = new Gallery();
-        gallery.setPhoneNumber(phoneNumber);
         List<Object> vouchers = restTemplate.getForObject(env.getProperty("voucher.service.endpoint") + "/vouchers?phonenumber=" + phoneNumber, List.class);
-
-        gallery.setVouchers(vouchers);
+        Gallery gallery = new Gallery(phoneNumber, vouchers);
 
         return new ResponseEntity(gallery, HttpStatus.OK);
 

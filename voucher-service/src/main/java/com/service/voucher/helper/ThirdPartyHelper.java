@@ -1,11 +1,17 @@
 package com.service.voucher.helper;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class ThirdPartyHelper {
+
+    final static Logger logger = LogManager.getLogger(ThirdPartyHelper.class);
+
     public static String get(String apiURL){
         String json = "";
         try {
@@ -13,7 +19,7 @@ public class ThirdPartyHelper {
             URL url = new URL(apiURL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept", "application/vnd.github.v3+json");
+            conn.setRequestProperty("Accept", "application/json");
             if (conn.getResponseCode() != 200) {
                 throw new RuntimeException("Failed : HTTP Error code : "
                         + conn.getResponseCode());
@@ -28,7 +34,7 @@ public class ThirdPartyHelper {
             conn.disconnect();
 
         } catch (Exception e) {
-            System.out.println("Exception in NetClientGet:- " + e);
+            logger.error(e.getMessage());
         }
         return json;
     }
