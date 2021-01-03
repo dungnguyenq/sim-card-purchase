@@ -17,7 +17,7 @@ public class ThirdPartyController {
         List<Integer> timeDelays = Arrays.asList(3000, 4000, 8000, 10000, 15000, 29000, 30000, 31000, 35000, 40000, 60000, 80000, 120000, 125000);
         Random rand = new Random();
         int randomTimeDelay = timeDelays.get(rand.nextInt(timeDelays.size()));
-        System.out.println(randomTimeDelay);
+        System.out.println("Delay Time: " + randomTimeDelay);
         Thread.sleep(randomTimeDelay);
 
         Random random = new Random();

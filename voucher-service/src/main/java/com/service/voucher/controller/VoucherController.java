@@ -26,6 +26,7 @@ public class VoucherController {
             voucherDto = voucherService.generateVoucher(generateRequest.getPhoneNumber());
         } catch (Exception ex){
             logger.error(ex.getMessage());
+            return new ResponseEntity(voucherDto, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(voucherDto, HttpStatus.OK);
     }

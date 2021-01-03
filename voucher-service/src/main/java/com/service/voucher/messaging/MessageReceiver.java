@@ -1,10 +1,20 @@
 package com.service.voucher.messaging;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.service.voucher.dto.EventDto;
+import com.service.voucher.dto.SmsDto;
+import com.service.voucher.entity.Voucher;
 import com.service.voucher.service.VoucherService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.concurrent.CountDownLatch;
 
 @Component
@@ -15,16 +25,35 @@ public class MessageReceiver {
     @Autowired
     VoucherService voucherService;
 
+    @Autowired
+    MessageSender messageSender;
+
     private CountDownLatch latch = new CountDownLatch(1);
 
-    public void receiveMessage(String message) {
-        logger.info("Received <" + message + ">");
-        voucherService.save(message);
-        latch.countDown();
-
+    @RabbitListener(queues=MessagingConfiguration.voucherQueueName)
+    public void handleVoucherMessage(@Payload String event) {
+        logger.info("Received <" + event + ">");
+        logger.info("Save new record!!!");
+        voucherService.save(event);
     }
 
-    public CountDownLatch getLatch() {
-        return latch;
+    @RabbitListener(queues=MessagingConfiguration.eventQueueName)
+    public void handleEventMessage(@Payload EventDto event) {
+        String phoneNumber = event.getPhoneNumber();
+        LocalDateTime dateTime = event.getDateTime();
+        logger.info("Received <" + phoneNumber + " - " + dateTime + ">");
+
+        Voucher voucher = voucherService.getVoucherWithLimitTime(phoneNumber, dateTime, 120);
+
+        SmsDto smsDto = new SmsDto(phoneNumber, "<NONE>");
+        if (voucher != null){
+            smsDto.setContent("YOUR VOUCHER CODE: " + voucher.getVoucherCode());
+        }
+        try{
+            logger.info("Send message to SMS queue");
+            messageSender.sendMessage(MessagingConfiguration.smsQueueName, smsDto);
+        } catch (Exception ex){
+            logger.error(ex.getMessage());
+        }
     }
 }

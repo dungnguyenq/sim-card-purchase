@@ -20,13 +20,10 @@ public class GalleryController {
     @Autowired
     private Environment env;
 
-
     @GetMapping("/gallery")
     public ResponseEntity getVouchers(@RequestParam(value = "phonenumber", required = true) String phoneNumber){
         List<Object> vouchers = restTemplate.getForObject(env.getProperty("voucher.service.endpoint") + "/vouchers?phonenumber=" + phoneNumber, List.class);
         Gallery gallery = new Gallery(phoneNumber, vouchers);
-
         return new ResponseEntity(gallery, HttpStatus.OK);
-
     }
 }

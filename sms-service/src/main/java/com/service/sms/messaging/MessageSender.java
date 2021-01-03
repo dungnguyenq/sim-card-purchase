@@ -1,4 +1,4 @@
-package com.service.voucher.messaging;
+package com.service.sms.messaging;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,8 +25,8 @@ public class MessageSender {
         rabbitTemplate.setMessageConverter(jsonMessageConverter);
     }
 
-    public void sendMessage(String queueName, Object event) throws Exception {
+    public void sendMessage(String queueName, String message) throws Exception {
         logger.info("Sending message...");
-        rabbitTemplate.convertAndSend(queueName, event);
+        rabbitTemplate.convertAndSend(queueName, message);
     }
 }

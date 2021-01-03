@@ -1,26 +1,15 @@
-package com.service.voucher.messaging;
+package com.service.sms.messaging;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.util.StdDateFormat;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.annotation.RabbitListenerConfigurer;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistrar;
-import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
-import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
-
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory;
 
@@ -33,16 +22,7 @@ public class MessagingConfiguration implements RabbitListenerConfigurer {
 
     static final String topicExchangeName = "service-topic";
 
-    public static final String voucherQueueName = "voucher-service-queue";
-
-    public static final String smsQueueName = "sms-service-queue";
-
-    public static final String eventQueueName = "event-queue";
-
-    @Bean
-    Queue voucherQueue() {
-        return new Queue(voucherQueueName, false);
-    }
+    static final String smsQueueName = "sms-service-queue";
 
     @Bean
     Queue smsQueue() {
@@ -50,28 +30,20 @@ public class MessagingConfiguration implements RabbitListenerConfigurer {
     }
 
     @Bean
-    Queue eventQueue() {
-        return new Queue(eventQueueName, false);
-    }
-
-    @Bean
     FanoutExchange exchange() {
         return new FanoutExchange(topicExchangeName);
     }
 
+
     @Bean
     public List<Binding> binding() {
         return Arrays.asList(
-                BindingBuilder.bind(voucherQueue()).to(exchange()),
-                BindingBuilder.bind(smsQueue()).to(exchange()),
-                BindingBuilder.bind(eventQueue()).to(exchange()));
+                BindingBuilder.bind(smsQueue()).to(exchange()));
     }
 
     @Bean
-    public Jackson2JsonMessageConverter jsonMessageConverter(Jackson2ObjectMapperBuilder builder) {
-        ObjectMapper objectMapper = builder.createXmlMapper(false).build();
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        return new Jackson2JsonMessageConverter(objectMapper);
+    public MessageConverter jsonMessageConverter() {
+        return new Jackson2JsonMessageConverter();
     }
 
     @Autowired
