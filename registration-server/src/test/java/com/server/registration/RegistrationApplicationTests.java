@@ -1,10 +1,10 @@
-package com.registration.server;
+package com.server.registration;
 
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ServerApplicationTests {
+class RegistrationApplicationTests {
 
 	@Test
 	void contextLoads() {
