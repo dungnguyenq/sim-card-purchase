@@ -20,6 +20,11 @@ public class GalleryController {
     @Autowired
     private Environment env;
 
+    @RequestMapping("/")
+    public String home() {
+        return "Hello from Gallery Service running at port: " + env.getProperty("local.server.port");
+    }
+
     @GetMapping("/gallery")
     public ResponseEntity getVouchers(@RequestParam(value = "phonenumber", required = true) String phoneNumber){
         List<Object> vouchers = restTemplate.getForObject(env.getProperty("voucher.service.endpoint") + "/vouchers?phonenumber=" + phoneNumber, List.class);
