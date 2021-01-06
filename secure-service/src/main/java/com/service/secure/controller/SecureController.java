@@ -1,6 +1,7 @@
 package com.service.secure.controller;
 
 import com.service.secure.dto.GenerateOTP;
+import com.service.secure.dto.SecureRequest;
 import com.service.secure.service.SecureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,10 +17,20 @@ public class SecureController {
     SecureService secureService;
 
     @PostMapping("/generate")
-    public ResponseEntity<String> generateOTP(@RequestBody GenerateOTP generateOTP){
-        String data = "";
+    public ResponseEntity<Integer> generateOTP(@RequestBody GenerateOTP generateOTP){
+        int data = 0;
         try{
-            data = Integer.toString(secureService.generateOTP(generateOTP.getPhoneNumber()));
+            data = secureService.generateOTP(generateOTP);
+        } catch (Exception ex){
+        }
+        return new ResponseEntity<>(data, HttpStatus.OK);
+    }
+
+    @PostMapping("/secure")
+    public ResponseEntity<Boolean> isSecure(@RequestBody SecureRequest secureRequest){
+        Boolean data = false;
+        try{
+            data = secureService.isSecure(secureRequest);
         } catch (Exception ex){
         }
         return new ResponseEntity<>(data, HttpStatus.OK);
