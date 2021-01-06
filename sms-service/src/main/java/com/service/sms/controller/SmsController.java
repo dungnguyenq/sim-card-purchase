@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/sms")
+@RequestMapping("/")
 public class SmsController {
 
     final static Logger logger = LogManager.getLogger(SmsController.class);
@@ -20,7 +20,6 @@ public class SmsController {
     @Autowired
     TwilioService twilioService;
 
-    // can not use in this app, will be use latter.
     @RequestMapping("/send")
     public ResponseEntity<String> sendSMS(@RequestBody SmsDto smsDto){
         String data = "";

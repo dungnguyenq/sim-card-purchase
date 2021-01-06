@@ -1,4 +1,4 @@
-package com.service.gallery.entity;
+package com.service.gallery.dto;
 
 import java.util.List;
 
