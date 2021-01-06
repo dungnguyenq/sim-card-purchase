@@ -26,7 +26,7 @@ public class SecureController {
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
-    @PostMapping("/secure")
+    @PostMapping("/verify")
     public ResponseEntity<Boolean> isSecure(@RequestBody SecureRequest secureRequest){
         Boolean data = false;
         try{
