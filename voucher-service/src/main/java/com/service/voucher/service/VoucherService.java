@@ -10,6 +10,6 @@ public interface VoucherService {
 
     VoucherDto generateVoucher(String phoneNumber) throws Exception;
     List<VoucherDto> getVouchers(String phoneNumber);
-    void save(String phoneNumber);
+    Voucher save(String phoneNumber);
     Voucher getVoucherWithLimitTime(String phoneNumber, LocalDateTime dateTime, int totalSeconds);
 }

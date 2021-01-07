@@ -8,10 +8,10 @@
 		<version>2.4.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.registration</groupId>
-	<artifactId>server</artifactId>
+	<groupId>com.server</groupId>
+	<artifactId>registration</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>server</name>
+	<name>registration</name>
 	<description>Registration server use Eureka to manage service</description>
 
 	<properties>

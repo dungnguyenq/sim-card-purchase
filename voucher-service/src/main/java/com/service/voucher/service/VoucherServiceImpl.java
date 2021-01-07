@@ -69,16 +69,15 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     @Override
-    public void save(String phoneNumber) {
+    public Voucher save(String phoneNumber) {
         String voucherCode = ThirdPartyHelper.get(env.getProperty("thirdparty.endpoint"));
-        if (!Strings.isNullOrEmpty(voucherCode)){
-            Voucher v = new Voucher();
-            LocalDateTime now = LocalDateTime.now();
-            v.setPhoneNumber(phoneNumber);
-            v.setVoucherCode(voucherCode);
-            v.setCreatedDate(now);
-            voucherRepository.save(v);
-        }
+        Voucher v = new Voucher();
+        LocalDateTime now = LocalDateTime.now();
+        v.setPhoneNumber(phoneNumber);
+        v.setVoucherCode(voucherCode);
+        v.setCreatedDate(now);
+        Voucher t = voucherRepository.save(v);
+        return voucherRepository.save(v);
     }
 
     @Override

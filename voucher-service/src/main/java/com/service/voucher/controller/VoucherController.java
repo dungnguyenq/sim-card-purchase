@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/")
 public class VoucherController {
@@ -29,5 +32,16 @@ public class VoucherController {
             return new ResponseEntity(voucherDto, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(voucherDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/vouchers")
+    public List<VoucherDto> getVouchers(@RequestParam(value = "phonenumber", required = true) String phoneNumber){
+        List<VoucherDto> results = new ArrayList<>();
+        try{
+            results = voucherService.getVouchers(phoneNumber);
+        } catch (Exception ex){
+            logger.error(ex.getMessage());
+        }
+        return results;
     }
 }
