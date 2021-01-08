@@ -45,7 +45,7 @@ public class MessageReceiver {
 
         Voucher voucher = voucherService.getVoucherWithLimitTime(phoneNumber, dateTime, 120);
 
-        SmsDto smsDto = new SmsDto(phoneNumber, "<NONE>");
+        SmsDto smsDto = new SmsDto(phoneNumber, "<YOUR VOUCHER CAN NOT BE GENERATE, PLEASE CONTACT US!!!>");
         if (voucher != null){
             smsDto.setContent("YOUR VOUCHER CODE: " + voucher.getVoucherCode());
         }
@@ -53,6 +53,7 @@ public class MessageReceiver {
             logger.info("Send message to SMS queue");
             messageSender.sendMessage(MessagingConfiguration.smsQueueName, smsDto);
         } catch (Exception ex){
+            logger.error("Generate voucher for " + phoneNumber + " can not be done!!!");
             logger.error(ex.getMessage());
         }
     }

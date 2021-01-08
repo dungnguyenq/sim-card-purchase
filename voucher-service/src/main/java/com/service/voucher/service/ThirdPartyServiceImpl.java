@@ -1,22 +1,31 @@
-package com.service.voucher.helper;
+package com.service.voucher.service;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ThirdPartyHelper {
+@Service
+public class ThirdPartyServiceImpl implements ThirdPartyService {
 
-    final static Logger logger = LogManager.getLogger(ThirdPartyHelper.class);
+    final static Logger logger = LogManager.getLogger(ThirdPartyServiceImpl.class);
 
-    public static String get(String apiURL){
-        String json = "";
+    @Autowired
+    private Environment env;
+
+    @Override
+    public String generateVoucherCode() {
+        String thirdPartyAPI = env.getProperty("thirdparty.endpoint");
+        String voucher = "";
         try {
 
-            URL url = new URL(apiURL);
+            URL url = new URL(thirdPartyAPI);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/json");
@@ -29,13 +38,13 @@ public class ThirdPartyHelper {
 
             String output;
             while ((output = br.readLine()) != null) {
-                json+=output;
+                voucher+=output;
             }
             conn.disconnect();
 
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
-        return json;
+        return voucher;
     }
 }

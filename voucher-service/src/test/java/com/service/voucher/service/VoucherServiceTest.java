@@ -3,21 +3,23 @@ package com.service.voucher.service;
 import com.service.voucher.dto.VoucherDto;
 import com.service.voucher.entity.Voucher;
 import com.service.voucher.repository.VoucherRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class VoucherServiceTest {
@@ -31,13 +33,13 @@ public class VoucherServiceTest {
     }
 
     @Autowired
-    private ApplicationContext context;
-
-    @Autowired
     private VoucherService voucherService;
 
     @MockBean
     private VoucherRepository voucherRepository;
+
+    @MockBean
+    private ThirdPartyService thirdPartyService;
 
     private Voucher voucher1;
     private Voucher voucher2;
@@ -72,37 +74,47 @@ public class VoucherServiceTest {
         vouchers.add(voucher2);
         vouchers.add(voucher3);
 
-        Mockito.when(voucherRepository.findVouchersByPhoneNumber(phoneNumber)).thenReturn(vouchers);
-
-        Mockito.when(voucherRepository.save(voucher1)).thenReturn(voucher1);
-
     }
 
 
     @Test
     public void testFindVouchersByPhoneNumber_thenVouchersListShouldBeReturned(){
-       List<VoucherDto> foundVouchers = voucherService.getVouchers(phoneNumber);
-
-       Assertions.assertNotNull(foundVouchers);
-       Assertions.assertEquals(foundVouchers.size(), 3);
+        when(voucherRepository.findVouchersByPhoneNumber(phoneNumber)).thenReturn(vouchers);
+        List<VoucherDto> foundVouchers = voucherService.getVouchers(phoneNumber);
+        assertNotNull(foundVouchers);
+        assertEquals(foundVouchers.size(), 3);
     }
 
     @Test
     public void testSaveVoucher_thenVoucherShouldBeReturned(){
+        when(thirdPartyService.generateVoucherCode()).thenReturn(voucherCode1);
+        when(voucherRepository.save(any(Voucher.class))).thenReturn(voucher1);
         Voucher foundVoucher = voucherService.save(phoneNumber);
 
-        Assertions.assertNotNull(foundVoucher);
-        Assertions.assertEquals(phoneNumber, foundVoucher.getPhoneNumber());
+        assertNotNull(foundVoucher);
+        assertEquals(phoneNumber, foundVoucher.getPhoneNumber());
+        assertEquals(voucherCode1, foundVoucher.getVoucherCode());
+        assertEquals(createdDate1, foundVoucher.getCreatedDate());
     }
 
     @Test
     public void testGetVoucherWithLimitTime_thenVoucherShouldBeReturned(){
-        Voucher saveVoucher = voucherRepository.save(voucher1);
+        when(voucherRepository.findVoucherByPhoneNumberAndCreatedDate(anyString(), any(LocalDateTime.class))).thenReturn(voucher1);
         Voucher foundVoucher = voucherService.getVoucherWithLimitTime(phoneNumber, createdDate1.minusSeconds(10), 30);
 
-        Assertions.assertNotNull(foundVoucher);
-        Assertions.assertEquals(foundVoucher.getCreatedDate(), createdDate1);
-        Assertions.assertEquals(foundVoucher.getVoucherCode(), voucherCode1);
-        Assertions.assertEquals(foundVoucher.getPhoneNumber(), phoneNumber);
+        assertNotNull(foundVoucher);
+        assertEquals(foundVoucher.getPhoneNumber(), phoneNumber);
+        assertEquals(foundVoucher.getVoucherCode(), voucherCode1);
+        assertEquals(foundVoucher.getCreatedDate(), createdDate1);
+    }
+
+    @Test
+    public void testGenerateVoucher_thenVoucherShouldBeReturned() {
+        when(voucherRepository.findVoucherByPhoneNumberAndCreatedDate(anyString(), any(LocalDateTime.class))).thenReturn(voucher1);
+        VoucherDto foundVoucher = voucherService.generateVoucher(phoneNumber);
+
+        assertNotNull(foundVoucher);
+        assertEquals(foundVoucher.getVoucherCode(), voucher1.getVoucherCode());
+        assertEquals(foundVoucher.getCreatedDate(), voucher1.getCreatedDate());
     }
 }

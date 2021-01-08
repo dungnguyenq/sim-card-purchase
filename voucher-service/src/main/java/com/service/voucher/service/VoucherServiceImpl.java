@@ -1,12 +1,10 @@
 package com.service.voucher.service;
 
-import com.google.common.base.Strings;
 import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.common.util.concurrent.TimeLimiter;
 import com.service.voucher.dto.EventDto;
 import com.service.voucher.dto.VoucherDto;
 import com.service.voucher.entity.Voucher;
-import com.service.voucher.helper.ThirdPartyHelper;
 import com.service.voucher.messaging.MessageSender;
 import com.service.voucher.messaging.MessagingConfiguration;
 import com.service.voucher.repository.VoucherRepository;
@@ -36,19 +34,28 @@ public class VoucherServiceImpl implements VoucherService {
     @Autowired
     MessageSender messageSender;
 
+    @Autowired
+    private ThirdPartyService thirdPartyService;
+
     @Override
-    public VoucherDto generateVoucher(String phoneNumber) throws Exception {
+    public VoucherDto generateVoucher(String phoneNumber) {
         LocalDateTime now = LocalDateTime.now();
         try{
             messageSender.sendMessage(MessagingConfiguration.voucherQueueName, phoneNumber);
         } catch (Exception ex){
+            logger.error("Can not send message {" + phoneNumber + "} to voucherQueue");
             logger.error(ex.getMessage());
         }
 
         Voucher voucher = getVoucherWithLimitTime(phoneNumber, now, 30);
         if (voucher == null){
             EventDto eventDto = new EventDto(phoneNumber, now);
-            messageSender.sendMessage(MessagingConfiguration.eventQueueName, eventDto);
+            try{
+                messageSender.sendMessage(MessagingConfiguration.eventQueueName, eventDto);
+            } catch (Exception ex){
+                logger.error("Can not send message {" + phoneNumber + ", " + now + "} to eventQueue");
+                logger.error(ex.getMessage());
+            }
         }
 
         VoucherDto voucherDto = new VoucherDto(voucher.getVoucherCode(), voucher.getCreatedDate());
@@ -70,7 +77,7 @@ public class VoucherServiceImpl implements VoucherService {
 
     @Override
     public Voucher save(String phoneNumber) {
-        String voucherCode = ThirdPartyHelper.get(env.getProperty("thirdparty.endpoint"));
+        String voucherCode = thirdPartyService.generateVoucherCode();
         Voucher v = new Voucher();
         LocalDateTime now = LocalDateTime.now();
         v.setPhoneNumber(phoneNumber);
@@ -96,8 +103,8 @@ public class VoucherServiceImpl implements VoucherService {
                 }
             }, totalSeconds, TimeUnit.SECONDS);
         } catch (Exception ex){
+            logger.error("Can not found the voucher of " + phoneNumber + " that created after: " + dateTime);
             logger.error(ex.getMessage());
-            return null;
         }
         return voucher;
     }

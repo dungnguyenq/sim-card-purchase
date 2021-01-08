@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface VoucherService {
 
-    VoucherDto generateVoucher(String phoneNumber) throws Exception;
+    VoucherDto generateVoucher(String phoneNumber);
     List<VoucherDto> getVouchers(String phoneNumber);
     Voucher save(String phoneNumber);
     Voucher getVoucherWithLimitTime(String phoneNumber, LocalDateTime dateTime, int totalSeconds);
