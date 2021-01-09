@@ -1,5 +1,6 @@
 package com.service.voucher.service;
 
+import com.google.common.base.Strings;
 import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.common.util.concurrent.TimeLimiter;
 import com.service.voucher.dto.EventDto;
@@ -47,10 +48,11 @@ public class VoucherServiceImpl implements VoucherService {
             logger.error(ex.getMessage());
         }
 
-        Voucher voucher = getVoucherWithLimitTime(phoneNumber, now, 30);
+        Voucher voucher = getVoucherWithLimitTime(phoneNumber, now, 29);
         if (voucher == null){
             EventDto eventDto = new EventDto(phoneNumber, now);
             try{
+                logger.info("The Voucher will be send to " + phoneNumber);
                 messageSender.sendMessage(MessagingConfiguration.eventQueueName, eventDto);
             } catch (Exception ex){
                 logger.error("Can not send message {" + phoneNumber + ", " + now + "} to eventQueue");
@@ -78,13 +80,15 @@ public class VoucherServiceImpl implements VoucherService {
     @Override
     public Voucher save(String phoneNumber) {
         String voucherCode = thirdPartyService.generateVoucherCode();
-        Voucher v = new Voucher();
-        LocalDateTime now = LocalDateTime.now();
-        v.setPhoneNumber(phoneNumber);
-        v.setVoucherCode(voucherCode);
-        v.setCreatedDate(now);
-        Voucher t = voucherRepository.save(v);
-        return voucherRepository.save(v);
+        if (!Strings.isNullOrEmpty(voucherCode)){
+            Voucher v = new Voucher();
+            LocalDateTime now = LocalDateTime.now();
+            v.setPhoneNumber(phoneNumber);
+            v.setVoucherCode(voucherCode);
+            v.setCreatedDate(now);
+            return voucherRepository.save(v);
+        }
+        return null;
     }
 
     @Override
@@ -105,6 +109,7 @@ public class VoucherServiceImpl implements VoucherService {
         } catch (Exception ex){
             logger.error("Can not found the voucher of " + phoneNumber + " that created after: " + dateTime);
             logger.error(ex.getMessage());
+            return null;
         }
         return voucher;
     }

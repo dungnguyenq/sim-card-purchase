@@ -45,10 +45,13 @@ public class MessageReceiver {
 
         Voucher voucher = voucherService.getVoucherWithLimitTime(phoneNumber, dateTime, 120);
 
-        SmsDto smsDto = new SmsDto(phoneNumber, "<YOUR VOUCHER CAN NOT BE GENERATE, PLEASE CONTACT US!!!>");
+        SmsDto smsDto = new SmsDto(phoneNumber, "<YOUR VOUCHER CAN NOT BE GENERATE ON TIME, PLEASE CONTACT US TO GET YOUR VOUCHER!!!>");
         if (voucher != null){
             smsDto.setContent("YOUR VOUCHER CODE: " + voucher.getVoucherCode());
+        } else{
+            logger.error("Can not generate Voucher on time");
         }
+
         try{
             logger.info("Send message to SMS queue");
             messageSender.sendMessage(MessagingConfiguration.smsQueueName, smsDto);
