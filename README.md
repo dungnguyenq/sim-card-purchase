@@ -1,2 +1,11 @@
 # sim-card-purchase
-The feature to purchase prepaid data for sim card
+- This is the simple microservice to provide the purchase prepaid data for SIM card
+- Technologies:
+   - Java 8
+   - Spring Boot
+   - Spring Cloud Netflix
+   - JPA/Hibernate
+   - JUnit
+   - RabbitMQ
+   - PostgreSQL
+   - Docker
