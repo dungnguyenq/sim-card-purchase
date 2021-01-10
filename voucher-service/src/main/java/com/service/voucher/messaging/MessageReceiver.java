@@ -34,7 +34,11 @@ public class MessageReceiver {
     public void handleVoucherMessage(@Payload String event) {
         logger.info("Received <" + event + ">");
         logger.info("Save new record!!!");
-        voucherService.save(event);
+        try{
+            voucherService.save(event);
+        } catch (Exception ex){
+            logger.error(ex.getMessage());
+        }
     }
 
     @RabbitListener(queues=MessagingConfiguration.eventQueueName)
