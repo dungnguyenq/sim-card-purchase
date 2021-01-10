@@ -1,0 +1,125 @@
+version: '3.6'
+
+services:
+  third-party-server:
+    container_name: third-party-server
+    image:  sim-card-purchase/third-party-server
+    hostname: third-party-server
+    ports:
+      - "9999:9999"
+
+  registration-server:
+    container_name: registration-server
+    image:  sim-card-purchase/registration-server
+    hostname: registration-server
+    ports:
+      - "8761:8761"
+
+  db:
+    container_name: postgres
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=quocdung95
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init-db:/docker-entrypoint-initdb.d/
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    ports:
+      - "4369:4369"
+      - "5671:5671"
+      - "5672:5672"
+      - "25672:25672"
+      - "15672:15672"
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
+      interval: 5s
+      timeout: 15s
+      retries: 1
+  zuul:
+    container_name: gateway
+    image:  sim-card-purchase/zuul-server
+    hostname: gateway
+    ports:
+      - "8881:8881"
+    links:
+      - registration-server
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://registration-server:8761/eureka/
+      - zuul.routes.voucher-service.path=/voucher/**
+      - zuul.routes.voucher-service.url=http://voucher-service:8883
+      - zuul.routes.gallery-service.path=/gallery/**
+      - zuul.routes.gallery-service.url=http://gallery-service:8882
+      - zuul.routes.sms-service.path=/sms/**
+      - zuul.routes.sms-service.url=http://sms-service:8884
+      - zuul.routes.secure-service.path=/secure/**
+      - zuul.routes.secure-service.url=http://secure-service:8885
+
+  sms-service:
+    container_name: sms-service
+    image: sim-card-purchase/sms-service
+    hostname: sms-service
+    ports:
+      - "8884:8884"
+    links:
+      - registration-server
+      - rabbitmq
+    environment:
+      - spring.rabbitmq.host=rabbitmq
+      - eureka.client.serviceUrl.defaultZone=http://registration-server:8761/eureka/
+    restart: on-failure
+    depends_on:
+      - rabbitmq
+
+  voucher-service:
+    container_name: voucher-service
+    image: sim-card-purchase/voucher-service
+    hostname: voucher-service
+    ports:
+      - "8883:8883"
+    links:
+      - registration-server
+      - zuul
+      - rabbitmq
+      - db
+    environment:
+      - spring.rabbitmq.host=rabbitmq
+      - eureka.client.serviceUrl.defaultZone=http://registration-server:8761/eureka/
+      - thirdparty.endpoint=http://third-party-server:9999/thirdparty/newvoucher
+      - spring.datasource.url=jdbc:postgresql://db:5432/voucher_service_db
+    restart: on-failure
+    depends_on:
+      - rabbitmq
+
+  gallery-service:
+    container_name: gallery-service
+    image: sim-card-purchase/gallery-service
+    hostname: gallery-service
+    ports:
+      - "8882:8882"
+    links:
+      - registration-server
+      - zuul
+      - voucher-service
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://registration-server:8761/eureka/
+      - voucher.service.endpoint=http://voucher-service:8883
+
+  secure-service:
+    container_name: secure-service
+    image: sim-card-purchase/secure-service
+    hostname: secure-service
+    ports:
+      - "8885:8885"
+    links:
+      - registration-server
+      - zuul
+      - db
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://registration-server:8761/eureka/
+      - spring.datasource.url=jdbc:postgresql://db:5432/secure_service_db
+      - sms.service.endpoint.send=http://sms-service:8884/send
