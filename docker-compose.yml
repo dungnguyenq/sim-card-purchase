@@ -123,3 +123,4 @@ services:
       - eureka.client.serviceUrl.defaultZone=http://registration-server:8761/eureka/
       - spring.datasource.url=jdbc:postgresql://db:5432/secure_service_db
       - sms.service.endpoint.send=http://sms-service:8884/send
+    restart: on-failure
