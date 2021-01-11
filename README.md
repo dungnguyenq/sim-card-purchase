@@ -40,7 +40,7 @@ docker-compose up
    - Docker
    
 ## Architecture Overview
-![Architecture_Overview](https://user-images.githubusercontent.com/26158591/104237987-7a102d80-548b-11eb-9eac-728b36c0e966.png)
+![Architecture_Overview1](https://user-images.githubusercontent.com/26158591/104240627-f5271300-548e-11eb-8d87-282385300cda.png)
 
 - third-party-server : the server provide API to generate voucher code, it will generate the voucher code from 3 -> 120 seconds. In this API I only use some case (in miliseconds) for test: (3000, 4000, 8000, 10000, 15000, 29000, 30000, 31000, 35000, 40000, 60000, 80000, 120000, 125000).
 - registration-server: this is eureka server which can manage services.
@@ -48,4 +48,15 @@ docker-compose up
 - voucher-service: It provide the APIs to generate the voucher and get list vouchers from phone number.
 - gallery-service: It provide the API to get list vouchers from phone number
 - sms-service: It will listening Queue on RabbitMQ and send message via SMS. It also open a API to send SMS.
-- secure-service: It provide the APIS to geneate One Time Password (OTP) and verify it.
+- secure-service: It provide the APIS to geneate One Time Password (OTP) and verify it.\
+
+## Entity Diagram
+#### voucher_service_db
+![voucher_service_db (1)](https://user-images.githubusercontent.com/26158591/104239716-8a290c80-548d-11eb-803c-f8198b4549d3.png)
+
+#### secure_service_db
+![voucher_service_db (2)](https://user-images.githubusercontent.com/26158591/104239988-ee4bd080-548d-11eb-8d47-68bf9a305562.png)
+
+## Solution Diagram
+
+## Screenshots
