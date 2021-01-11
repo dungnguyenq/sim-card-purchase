@@ -31,14 +31,19 @@ public class SecureController {
     Environment env;
 
     @PostMapping("/generate")
-    public void generateOTP(@RequestBody GenerateOTP generateOTP){
+    public ResponseEntity generateOTP(@RequestBody GenerateOTP generateOTP){
         int data = 0;
         try{
             data = secureService.generateOTP(generateOTP);
             SmsDto smsDto = new SmsDto(generateOTP.getPhoneNumber(), "YOUR OTP: " + data);
             String smsId = restTemplate.postForObject(env.getProperty("sms.service.endpoint.send"), smsDto, String.class);
+            if (Strings.isNullOrEmpty(smsId)){
+                return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            }
+            return new ResponseEntity(HttpStatus.OK);
         } catch (Exception ex){
             logger.error(ex.getMessage());
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -49,6 +54,7 @@ public class SecureController {
             data = secureService.isSecure(secureRequest);
         } catch (Exception ex){
             logger.error(ex.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
