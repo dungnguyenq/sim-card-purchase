@@ -57,6 +57,11 @@ docker-compose up
 #### secure_service_db
 ![voucher_service_db (2)](https://user-images.githubusercontent.com/26158591/104239988-ee4bd080-548d-11eb-8d47-68bf9a305562.png)
 
-## Solution Diagram
+## Sequence Diagram
+### Generate voucher
+![sequence_generate_voucher](https://user-images.githubusercontent.com/26158591/104246888-5ce25b80-5499-11eb-9566-54254e8bcbf2.png)
+
+### Get vouchers
+![sequence_get_vouchers](https://user-images.githubusercontent.com/26158591/104248947-07a84900-549d-11eb-81ec-2510b2cb9a71.png)
 
 ## Screenshots
