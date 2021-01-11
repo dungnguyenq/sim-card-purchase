@@ -28,8 +28,24 @@ docker-compose up
       - gallery-service -> {path to sim-card-purchase}\gallery-service
       - sms-service -> {path to sim-card-purchase}\sms-service
       - secure-service -> {path to sim-card-purchase}\secure-service
+      
+## Curl Commands
+```shell
+curl -d "{\"phoneNumber\":\"<your-phone-number-with-country-code>\"}" -H "Content-Type: application/json" http://localhost:8881/api/voucher/generate
+curl -v http://localhost:8881/api/gallery/all?phonenumber=<your-phone-number-with-country-code>
+curl -d "{\"phoneNumber\":\"<your-phone-number-with-country-code>\"}" -H "Content-Type: application/json" http://localhost:8881/api/secure/generate
+curl -d "{\"phoneNumber\":\"<your-phone-number-with-country-code>\",\"otpCode\":<otp-receive-from-sms>}" -H "Content-Type: application/json" http://localhost:8881/api/secure/verify
+```
 
-## Technologies Used:
+#### Examples:
+```shell
+curl -d "{\"phoneNumber\":\"84968864509\"}" -H "Content-Type: application/json" http://localhost:8881/api/voucher/generate
+curl -v http://localhost:8881/api/gallery/all?phonenumber=84968864509
+curl -d "{\"phoneNumber\":\"84968864509\"}" -H "Content-Type: application/json" http://localhost:8881/api/secure/generate
+curl -d "{\"phoneNumber\":\"84968864509\",\"otpCode\":914799}" -H "Content-Type: application/json" http://localhost:8881/api/secure/verify
+```
+
+## Technologies:
    - Java 8
    - Spring Boot
    - Spring Cloud Netflix
@@ -65,3 +81,10 @@ docker-compose up
 ![sequence_get_vouchers](https://user-images.githubusercontent.com/26158591/104248947-07a84900-549d-11eb-81ec-2510b2cb9a71.png)
 
 ## Screenshots
+### Eureka Dashboard
+![image](https://user-images.githubusercontent.com/26158591/104250224-b2216b80-549f-11eb-879f-64bcec0fc8b5.png)
+
+### RabbitMQ
+![image](https://user-images.githubusercontent.com/26158591/104250319-eeed6280-549f-11eb-80a3-add952c0e834.png)
+
+![image](https://user-images.githubusercontent.com/26158591/104250344-00366f00-54a0-11eb-8adc-4e350680f3ee.png)
