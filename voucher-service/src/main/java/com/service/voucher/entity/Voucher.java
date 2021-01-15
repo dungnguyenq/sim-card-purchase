@@ -1,11 +1,14 @@
 package com.service.voucher.entity;
 
+import lombok.*;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
+@Data
+@NoArgsConstructor
 @Table(name = "voucher")
 public class Voucher implements Serializable {
 
@@ -13,7 +16,7 @@ public class Voucher implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private @Setter(AccessLevel.PRIVATE) Integer id;
 
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
@@ -23,32 +26,4 @@ public class Voucher implements Serializable {
 
     @Column(name = "created_date", nullable = false)
     protected LocalDateTime createdDate;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public String getVoucherCode() {
-        return voucherCode;
-    }
-
-    public void setVoucherCode(String voucherCode) {
-        this.voucherCode = voucherCode;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
 }
