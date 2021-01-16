@@ -23,7 +23,7 @@ public class VoucherController {
     final static Logger logger = LogManager.getLogger(VoucherController.class);
 
     @PostMapping("/generate")
-    public ResponseEntity<VoucherDto> generateVoucher(@RequestBody GenerateRequest generateRequest){
+    public ResponseEntity<?> generateVoucher(@RequestBody GenerateRequest generateRequest){
         VoucherDto voucherDto = new VoucherDto();
         try{
             voucherDto = voucherService.generateVoucher(generateRequest.getPhoneNumber());
@@ -31,7 +31,12 @@ public class VoucherController {
             logger.error(ex.getMessage());
             return new ResponseEntity(voucherDto, HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(voucherDto, HttpStatus.OK);
+
+        if (voucherDto == null){
+            return new ResponseEntity("Voucher code will be sent through SMS later", HttpStatus.SERVICE_UNAVAILABLE);
+        }
+
+        return new ResponseEntity(voucherDto, HttpStatus.CREATED);
     }
 
     @GetMapping("/vouchers")

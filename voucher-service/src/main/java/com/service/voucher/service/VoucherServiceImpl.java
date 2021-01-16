@@ -58,6 +58,7 @@ public class VoucherServiceImpl implements VoucherService {
                 logger.error("Can not send message {" + phoneNumber + ", " + now + "} to eventQueue");
                 logger.error(ex.getMessage());
             }
+            return null;
         }
 
         VoucherDto voucherDto = new VoucherDto(voucher.getVoucherCode(), voucher.getCreatedDate());
