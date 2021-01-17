@@ -11,7 +11,6 @@ import java.util.List;
 @Repository
 public interface VoucherRepository extends JpaRepository<Voucher, Long> {
 
-    @Query("SELECT v FROM Voucher v WHERE v.phoneNumber = ?1")
     List<Voucher> findVouchersByPhoneNumber(String phoneNumber);
 
     @Query("SELECT v FROM Voucher v WHERE v.phoneNumber = ?1 AND v.createdDate > ?2")
