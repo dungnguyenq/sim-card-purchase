@@ -111,7 +111,7 @@ public class VoucherServiceTest {
     @Test
     public void testGenerateVoucher_thenVoucherShouldBeReturned() {
         when(voucherRepository.findVoucherByPhoneNumberAndCreatedDate(anyString(), any(LocalDateTime.class))).thenReturn(voucher1);
-        VoucherDto foundVoucher = voucherService.generateVoucher(phoneNumber);
+        VoucherDto foundVoucher = voucherService.getVoucher(phoneNumber);
 
         assertNotNull(foundVoucher);
         assertEquals(foundVoucher.getVoucherCode(), voucher1.getVoucherCode());

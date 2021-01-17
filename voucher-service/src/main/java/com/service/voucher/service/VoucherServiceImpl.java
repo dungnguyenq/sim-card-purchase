@@ -39,7 +39,7 @@ public class VoucherServiceImpl implements VoucherService {
     private ThirdPartyService thirdPartyService;
 
     @Override
-    public VoucherDto generateVoucher(String phoneNumber) {
+    public VoucherDto getVoucher(String phoneNumber) {
         LocalDateTime now = LocalDateTime.now();
         try{
             messageSender.sendMessage(MessagingConfiguration.voucherQueueName, phoneNumber);

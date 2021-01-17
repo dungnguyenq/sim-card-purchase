@@ -86,7 +86,7 @@ public class VoucherControllerTest {
 
     @Test
     public void generateVoucher_itShouldReturnStatusOk() throws Exception{
-        given(voucherService.generateVoucher(anyString())).willReturn(voucher1);
+        given(voucherService.getVoucher(anyString())).willReturn(voucher1);
 
         String jsonString = objectMapper.writeValueAsString(voucher1);
 

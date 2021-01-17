@@ -1,6 +1,6 @@
 package com.service.voucher.controller;
 
-import com.service.voucher.dto.GenerateRequest;
+import com.service.voucher.dto.PhoneDto;
 import com.service.voucher.dto.VoucherDto;
 import com.service.voucher.service.VoucherService;
 import org.apache.logging.log4j.LogManager;
@@ -22,15 +22,8 @@ public class VoucherController {
     final static Logger logger = LogManager.getLogger(VoucherController.class);
 
     @PostMapping("/")
-    public ResponseEntity<?> getVoucher(@RequestBody GenerateRequest generateRequest){
-        VoucherDto voucherDto = new VoucherDto();
-        try{
-            voucherDto = voucherService.generateVoucher(generateRequest.getPhoneNumber());
-        } catch (Exception ex){
-            logger.error(ex.getMessage());
-            return new ResponseEntity(voucherDto, HttpStatus.BAD_REQUEST);
-        }
-
+    public ResponseEntity<?> getVoucher(@RequestBody PhoneDto phoneDto){
+        VoucherDto voucherDto = voucherService.getVoucher(phoneDto.getPhoneNumber());
         if (voucherDto == null){
             return new ResponseEntity("Voucher code will be sent through SMS later", HttpStatus.SERVICE_UNAVAILABLE);
         }
