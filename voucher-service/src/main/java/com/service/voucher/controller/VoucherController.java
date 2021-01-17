@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/")
 public class VoucherController {
 
     @Autowired
@@ -22,8 +21,8 @@ public class VoucherController {
 
     final static Logger logger = LogManager.getLogger(VoucherController.class);
 
-    @PostMapping("/generate")
-    public ResponseEntity<?> generateVoucher(@RequestBody GenerateRequest generateRequest){
+    @PostMapping("/")
+    public ResponseEntity<?> getVoucher(@RequestBody GenerateRequest generateRequest){
         VoucherDto voucherDto = new VoucherDto();
         try{
             voucherDto = voucherService.generateVoucher(generateRequest.getPhoneNumber());
@@ -39,8 +38,8 @@ public class VoucherController {
         return new ResponseEntity(voucherDto, HttpStatus.CREATED);
     }
 
-    @GetMapping("/vouchers")
-    public List<VoucherDto> getVouchers(@RequestParam(value = "phonenumber", required = true) String phoneNumber){
+    @GetMapping("/{phone-number}")
+    public List<VoucherDto> getVouchers(@PathVariable("phone-number") String phoneNumber){
         List<VoucherDto> results = new ArrayList<>();
         try{
             results = voucherService.getVouchers(phoneNumber);
