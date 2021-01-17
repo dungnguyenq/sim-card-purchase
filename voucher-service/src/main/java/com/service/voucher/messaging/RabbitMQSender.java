@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 @Component
-public class MessageSender {
+public class RabbitMQSender {
 
-    final static Logger logger = LogManager.getLogger(MessageReceiver.class);
+    final static Logger logger = LogManager.getLogger(RabbitMQReceiver.class);
 
     @Autowired
     private RabbitTemplate rabbitTemplate;

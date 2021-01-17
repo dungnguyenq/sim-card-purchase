@@ -6,8 +6,8 @@ import com.google.common.util.concurrent.TimeLimiter;
 import com.service.voucher.dto.EventDto;
 import com.service.voucher.dto.VoucherDto;
 import com.service.voucher.entity.Voucher;
-import com.service.voucher.messaging.MessageSender;
-import com.service.voucher.messaging.MessagingConfiguration;
+import com.service.voucher.messaging.RabbitMQSender;
+import com.service.voucher.messaging.RabbitMQConfiguration;
 import com.service.voucher.repository.VoucherRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +33,7 @@ public class VoucherServiceImpl implements VoucherService {
     Environment env;
 
     @Autowired
-    MessageSender messageSender;
+    RabbitMQSender rabbitMQSender;
 
     @Autowired
     private ThirdPartyService thirdPartyService;
@@ -42,7 +42,7 @@ public class VoucherServiceImpl implements VoucherService {
     public VoucherDto getVoucher(String phoneNumber) {
         LocalDateTime now = LocalDateTime.now();
         try{
-            messageSender.sendMessage(MessagingConfiguration.voucherQueueName, phoneNumber);
+            rabbitMQSender.sendMessage(RabbitMQConfiguration.voucherQueueName, phoneNumber);
         } catch (Exception ex){
             logger.error("Can not send message {" + phoneNumber + "} to voucherQueue");
             logger.error(ex.getMessage());
@@ -53,7 +53,7 @@ public class VoucherServiceImpl implements VoucherService {
             EventDto eventDto = new EventDto(phoneNumber, now);
             try{
                 logger.info("The Voucher will be send to " + phoneNumber);
-                messageSender.sendMessage(MessagingConfiguration.eventQueueName, eventDto);
+                rabbitMQSender.sendMessage(RabbitMQConfiguration.eventQueueName, eventDto);
             } catch (Exception ex){
                 logger.error("Can not send message {" + phoneNumber + ", " + now + "} to eventQueue");
                 logger.error(ex.getMessage());
