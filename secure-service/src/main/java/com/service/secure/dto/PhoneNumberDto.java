@@ -9,10 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SecureRequest {
+public class PhoneNumberDto {
     @NotBlank
     private String phoneNumber;
-
-    @NotBlank
-    private int otpCode;
 }

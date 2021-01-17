@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GenerateOTP {
+public class OtpCodeDto {
     @NotBlank
-    private String phoneNumber;
+    private int otpCode;
 }

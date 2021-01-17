@@ -1,10 +1,10 @@
 package com.service.secure.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.service.secure.dto.GenerateOTP;
-import com.service.secure.dto.SecureRequest;
+import com.service.secure.dto.PhoneNumberDto;
+import com.service.secure.dto.OtpCodeDto;
 import com.service.secure.dto.SmsDto;
-import com.service.secure.service.SecureService;
+import com.service.secure.service.OtpCodeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,13 +22,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ExtendWith(SpringExtension.class)
-public class SecureControllerTest {
+public class OtpCodeControllerTest {
 
     @MockBean
     private RestTemplate restTemplate;
 
     @MockBean
-    private SecureService secureService;
+    private OtpCodeService otpCodeService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -36,24 +36,24 @@ public class SecureControllerTest {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     private String phoneNumber = "84968864509";
-    private GenerateOTP generateOTP;
-    private SecureRequest secureRequest;
+    private PhoneNumberDto phoneNumberDto;
+    private OtpCodeDto otpCodeDto;
     private int otp = 180495;
     private String sid = "sid234567653234345";
 
     @BeforeEach
     public void setup(){
-        generateOTP = new GenerateOTP(phoneNumber);
-        secureRequest = new SecureRequest(phoneNumber, otp);
+        phoneNumberDto = new PhoneNumberDto(phoneNumber);
+        otpCodeDto = new OtpCodeDto(otp);
     }
 
     @Test
     public void testIsSecure_itShouldReturnTrueAndStatusOk() throws Exception {
-        when(secureService.isSecure(any(SecureRequest.class))).thenReturn(Boolean.TRUE);
+        when(otpCodeService.isSecure(phoneNumber, any(OtpCodeDto.class))).thenReturn(Boolean.TRUE);
 
-        String jsonString = objectMapper.writeValueAsString(secureRequest);
+        String jsonString = objectMapper.writeValueAsString(otpCodeDto);
 
-        mockMvc.perform(post("/verify")
+        mockMvc.perform(post("/otp/" + phoneNumber)
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andExpect(status().isOk())
                 .andExpect(content().string("true"));
@@ -61,11 +61,11 @@ public class SecureControllerTest {
 
     @Test
     public void testIsSecure_itShouldReturnFalseAndStatusOk() throws Exception {
-        when(secureService.isSecure(any(SecureRequest.class))).thenReturn(Boolean.FALSE);
+        when(otpCodeService.isSecure(phoneNumber, any(OtpCodeDto.class))).thenReturn(Boolean.FALSE);
 
-        String jsonString = objectMapper.writeValueAsString(secureRequest);
+        String jsonString = objectMapper.writeValueAsString(otpCodeDto);
 
-        mockMvc.perform(post("/verify")
+        mockMvc.perform(post("/otp/" + phoneNumber)
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andExpect(status().isOk())
                 .andExpect(content().string("false"));
@@ -75,9 +75,9 @@ public class SecureControllerTest {
     public void testGenerateOtp_itShouldReturnStatusOk() throws Exception {
         when(restTemplate.postForObject(any(String.class), any(SmsDto.class), eq(String.class))).thenReturn(sid);
 
-        String jsonString = objectMapper.writeValueAsString(generateOTP);
+        String jsonString = objectMapper.writeValueAsString(phoneNumberDto);
 
-        mockMvc.perform(post("/generate")
+        mockMvc.perform(post("/otp")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andExpect(status().isOk());
     }
@@ -86,9 +86,9 @@ public class SecureControllerTest {
     public void testGenerateOtp_itShouldReturnStatusBadRequest() throws Exception {
         when(restTemplate.postForObject(any(String.class), any(SmsDto.class), eq(String.class))).thenReturn("");
 
-        String jsonString = objectMapper.writeValueAsString(generateOTP);
+        String jsonString = objectMapper.writeValueAsString(phoneNumberDto);
 
-        mockMvc.perform(post("/generate")
+        mockMvc.perform(post("/otp")
                 .contentType(MediaType.APPLICATION_JSON).content(jsonString))
                 .andExpect(status().isBadRequest());
     }
