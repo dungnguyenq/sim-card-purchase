@@ -41,9 +41,10 @@ public class OtpCodeServiceImpl implements OtpCodeService {
 
         OtpCode otpCode = otpCodeRepository.findOtpCodeByPhoneNumber(phoneNumberDto.getPhoneNumber());
         if (otpCode == null){
+            otpCode = new OtpCode();
+            otpCode.setPhoneNumber(phoneNumberDto.getPhoneNumber());
             otpCode.setCreatedDate(now);
         }
-        otpCode.setPhoneNumber(phoneNumberDto.getPhoneNumber());
         otpCode.setSecretKey(secretKey);
         otpCode.setUsed(false);
         otpCode.setModifiedDate(now);
