@@ -34,7 +34,7 @@ public class OtpCodeController {
         try{
             data = otpCodeService.generateOTP(phoneNumberDto);
             SmsDto smsDto = new SmsDto(phoneNumberDto.getPhoneNumber(), "YOUR OTP: " + data);
-            String smsId = restTemplate.postForObject(env.getProperty("sms.service.endpoint.send"), smsDto, String.class);
+            String smsId = restTemplate.postForObject(env.getProperty("sms.service.sendSMS"), smsDto, String.class);
             if (Strings.isNullOrEmpty(smsId)){
                 return new ResponseEntity(HttpStatus.BAD_GATEWAY);
             }
