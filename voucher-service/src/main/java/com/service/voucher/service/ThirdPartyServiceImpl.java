@@ -2,8 +2,7 @@ package com.service.voucher.service;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -16,15 +15,13 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 
     final static Logger logger = LogManager.getLogger(ThirdPartyServiceImpl.class);
 
-    @Autowired
-    private Environment env;
+    @Value("${thirdparty.endpoint}")
+    private String thirdPartyAPI;
 
     @Override
     public String generateVoucherCode() {
-        String thirdPartyAPI = env.getProperty("thirdparty.endpoint");
         String voucher = "";
         try {
-
             URL url = new URL(thirdPartyAPI);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");

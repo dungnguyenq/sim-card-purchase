@@ -12,7 +12,6 @@ import com.service.voucher.repository.VoucherRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,9 +27,6 @@ public class VoucherServiceImpl implements VoucherService {
 
     @Autowired
     VoucherRepository voucherRepository;
-
-    @Autowired
-    Environment env;
 
     @Autowired
     RabbitMQSender rabbitMQSender;

@@ -7,7 +7,7 @@ import com.service.secure.entity.OtpCode;
 import com.service.secure.repository.OtpCodeRepository;
 import org.apache.commons.codec.DecoderException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyGenerator;
@@ -27,8 +27,8 @@ public class OtpCodeServiceImpl implements OtpCodeService {
     @Autowired
     OtpCodeRepository otpCodeRepository;
 
-    @Autowired
-    Environment env;
+    @Value("${otp.code.expired}")
+    private int expiredTimeInMinutes;
 
     @Override
     public int generateOTP(PhoneNumberDto phoneNumberDto) throws NoSuchAlgorithmException, InvalidKeyException {
@@ -56,10 +56,9 @@ public class OtpCodeServiceImpl implements OtpCodeService {
     @Override
     public boolean isSecure(String phoneNumber, OtpCodeDto otpCodeDto) throws NoSuchAlgorithmException, InvalidKeyException {
         TimeBasedOneTimePasswordGenerator totp = new TimeBasedOneTimePasswordGenerator();
-        int expiredTime = Integer.valueOf(env.getProperty("otp.code.expired"));
         OtpCode otpCode = otpCodeRepository.findOtpCodeByPhoneNumber(phoneNumber);
 
-        if (otpCode == null || otpCode.isUsed() ||Duration.between(otpCode.getModifiedDate(), Instant.now()).toMinutes() >= expiredTime){
+        if (otpCode == null || otpCode.isUsed() ||Duration.between(otpCode.getModifiedDate(), Instant.now()).toMinutes() >= expiredTimeInMinutes){
             return false;
         }
 

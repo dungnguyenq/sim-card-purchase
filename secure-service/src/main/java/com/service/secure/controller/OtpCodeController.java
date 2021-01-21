@@ -8,7 +8,7 @@ import com.service.secure.service.OtpCodeService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +25,8 @@ public class OtpCodeController {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Autowired
-    Environment env;
+    @Value("${sms.service.sendSMS}")
+    private String smsServiceAPIEntpoint;
 
     @PostMapping("/otp")
     public ResponseEntity getOTP(@RequestBody PhoneNumberDto phoneNumberDto){
@@ -34,7 +34,7 @@ public class OtpCodeController {
         try{
             data = otpCodeService.generateOTP(phoneNumberDto);
             SmsDto smsDto = new SmsDto(phoneNumberDto.getPhoneNumber(), "YOUR OTP: " + data);
-            String smsId = restTemplate.postForObject(env.getProperty("sms.service.sendSMS"), smsDto, String.class);
+            String smsId = restTemplate.postForObject(smsServiceAPIEntpoint, smsDto, String.class);
             if (Strings.isNullOrEmpty(smsId)){
                 return new ResponseEntity(HttpStatus.BAD_GATEWAY);
             }

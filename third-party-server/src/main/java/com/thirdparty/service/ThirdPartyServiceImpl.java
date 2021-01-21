@@ -1,7 +1,6 @@
 package com.thirdparty.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -11,8 +10,15 @@ import java.util.Random;
 @Service
 public class ThirdPartyServiceImpl implements ThirdPartyService {
 
-    @Autowired
-    private Environment env;
+    @Value("${voucher.left.limit}")
+    private int leftLimit;
+
+    @Value("${voucher.right.limit}")
+    private int rightLimit;
+
+    @Value("${voucher.length}")
+    private int voucherLength;
+
 
     @Override
     public String getVoucherCode() throws Exception {
@@ -24,9 +30,6 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
         Thread.sleep(randomTimeDelay);
 
         Random random = new Random();
-        int leftLimit = Integer.valueOf(env.getProperty("voucher.left.limit"));
-        int rightLimit = Integer.valueOf(env.getProperty("voucher.right.limit"));
-        int voucherLength = Integer.valueOf(env.getProperty("voucher.length"));
 
         String newVoucher = random.ints(leftLimit, rightLimit + 1)
                 .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
