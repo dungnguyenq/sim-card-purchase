@@ -18,7 +18,7 @@ public class ThirdPartyController {
         String newVoucher = thirdPartyService.getVoucherCode();
         if (newVoucher.isEmpty()){
             System.out.println("Can not generate the voucher code");
-            return new ResponseEntity<>(newVoucher, HttpStatus.GATEWAY_TIMEOUT);
+            return new ResponseEntity<>(newVoucher, HttpStatus.SERVICE_UNAVAILABLE);
         }
         return new ResponseEntity<>(newVoucher, HttpStatus.OK);
     }
