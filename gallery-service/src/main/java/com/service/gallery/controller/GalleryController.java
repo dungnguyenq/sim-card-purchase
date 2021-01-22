@@ -33,7 +33,7 @@ public class GalleryController {
             gallery.setTotalVouchers(vouchers.size());
         } catch (Exception ex){
             logger.error(ex.getMessage());
-            return new ResponseEntity(gallery, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(gallery, HttpStatus.BAD_GATEWAY);
         }
         return new ResponseEntity(gallery, HttpStatus.OK);
     }

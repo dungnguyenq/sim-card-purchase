@@ -26,7 +26,7 @@ public class SmsController {
             data = twilioService.sendSMS(smsDto);
         } catch (Exception ex){
             logger.error(ex.getMessage());
-            return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(data, HttpStatus.BAD_GATEWAY);
         }
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
