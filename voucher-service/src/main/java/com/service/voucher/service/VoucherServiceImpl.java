@@ -90,18 +90,15 @@ public class VoucherServiceImpl implements VoucherService {
 
     @Override
     public Voucher getVoucherWithLimitTime(String phoneNumber, LocalDateTime dateTime, int totalSeconds) {
-        Voucher voucher = new Voucher();
+        Voucher voucher;
         TimeLimiter limiter = SimpleTimeLimiter.create(Executors.newCachedThreadPool());
         try {
-            voucher = limiter.callWithTimeout(new Callable<Voucher>() {
-                @Override
-                public Voucher call() throws Exception {
+            voucher = limiter.callWithTimeout(() -> {
                     Voucher temp = null;
                     while (temp == null){
                         temp = voucherRepository.findVoucherByPhoneNumberAndCreatedDate(phoneNumber, dateTime);
                     }
                     return temp;
-                }
             }, totalSeconds, TimeUnit.SECONDS);
         } catch (Exception ex){
             logger.error("Can not found the voucher of " + phoneNumber + " that created after: " + dateTime);
