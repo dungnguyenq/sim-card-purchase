@@ -11,9 +11,9 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MessageReceiver {
+public class RabbitMQReceiver {
 
-    final static Logger logger = LogManager.getLogger(MessageReceiver.class);
+    final static Logger logger = LogManager.getLogger(RabbitMQReceiver.class);
 
     @Autowired
     TwilioService twilioService;
