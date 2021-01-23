@@ -21,9 +21,10 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
     @Override
     public String generateVoucherCode() {
         String voucher = "";
+        HttpURLConnection conn = null;
         try {
             URL url = new URL(thirdPartyAPI);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/json");
             if (conn.getResponseCode() != 200) {
@@ -37,10 +38,10 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
             while ((output = br.readLine()) != null) {
                 voucher+=output;
             }
-            conn.disconnect();
-
         } catch (Exception e) {
             logger.error(e.getMessage());
+        } finally {
+            conn.disconnect();
         }
         return voucher;
     }
