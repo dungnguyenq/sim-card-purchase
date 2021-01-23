@@ -31,18 +31,18 @@ docker-compose up
       
 ## Curl Commands
 ```shell
-curl -d "{\"phoneNumber\":\"<your-phone-number-with-country-code>\"}" -H "Content-Type: application/json" http://localhost:8881/api/voucher/generate
-curl -v http://localhost:8881/api/gallery/all?phonenumber=<your-phone-number-with-country-code>
-curl -d "{\"phoneNumber\":\"<your-phone-number-with-country-code>\"}" -H "Content-Type: application/json" http://localhost:8881/api/secure/generate
-curl -d "{\"phoneNumber\":\"<your-phone-number-with-country-code>\",\"otpCode\":<otp-receive-from-sms>}" -H "Content-Type: application/json" http://localhost:8881/api/secure/verify
+curl -d "{\"phoneNumber\":\"<your-phone-number-with-country-code>\"}" -H "Content-Type: application/json" http://localhost:8881/api/voucher
+curl -v http://localhost:8881/api/gallery?phonenumber=<your-phone-number-with-country-code>
+curl -d "{\"phoneNumber\":\"<your-phone-number-with-country-code>\"}" -H "Content-Type: application/json" http://localhost:8881/api/secure/otp
+curl -d "{\"otpCode\":<otp-receive-from-sms>}" -H "Content-Type: application/json" http://localhost:8881/api/secure/otp/<your-phone-number-with-country-code>
 ```
 
 #### Examples:
 ```shell
-curl -d "{\"phoneNumber\":\"84968864509\"}" -H "Content-Type: application/json" http://localhost:8881/api/voucher/generate
-curl -v http://localhost:8881/api/gallery/all?phonenumber=84968864509
-curl -d "{\"phoneNumber\":\"84968864509\"}" -H "Content-Type: application/json" http://localhost:8881/api/secure/generate
-curl -d "{\"phoneNumber\":\"84968864509\",\"otpCode\":914799}" -H "Content-Type: application/json" http://localhost:8881/api/secure/verify
+curl -d "{\"phoneNumber\":\"84968864509\"}" -H "Content-Type: application/json" http://localhost:8881/api/voucher
+curl -v http://localhost:8881/api/gallery?phonenumber=84968864509
+curl -d "{\"phoneNumber\":\"84968864509\"}" -H "Content-Type: application/json" http://localhost:8881/api/secure/otp
+curl -d "{\"otpCode\":914799}" -H "Content-Type: application/json" http://localhost:8881/api/secure/otp/84968864509
 ```
 
 ## Technologies:
