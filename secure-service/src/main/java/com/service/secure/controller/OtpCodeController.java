@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-@RestController
+@RestController("/otp")
 public class OtpCodeController {
 
     final static Logger logger = LogManager.getLogger(OtpCodeController.class);
@@ -28,7 +28,7 @@ public class OtpCodeController {
     @Value("${sms.service.sendSMS}")
     private String smsServiceAPIEntpoint;
 
-    @PostMapping("/otp")
+    @PostMapping("/")
     public ResponseEntity getOTP(@RequestBody PhoneNumberDto phoneNumberDto){
         int data = 0;
         try{
@@ -45,7 +45,7 @@ public class OtpCodeController {
         }
     }
 
-    @PostMapping("/otp/{phone-number}")
+    @PostMapping("/{phone-number}")
     public ResponseEntity<Boolean> checkOTP(@PathVariable("phone-number") String phoneNumber, @RequestBody OtpCodeDto otpCodeDto){
         Boolean data = false;
         try{
