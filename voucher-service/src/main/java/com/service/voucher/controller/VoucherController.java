@@ -29,7 +29,7 @@ public class VoucherController {
         VoucherDto voucherDto = voucherService.getVoucher(phoneDto.getPhoneNumber());
 
         if (voucherDto == null){
-            return new ResponseEntity(Collections.singletonMap("message", "Voucher code will be sent through SMS later"), HttpStatus.SERVICE_UNAVAILABLE);
+            return new ResponseEntity(Collections.singletonMap("message", "Voucher code will be sent through SMS later"), HttpStatus.ACCEPTED);
         }
 
         return new ResponseEntity(voucherDto, HttpStatus.CREATED);
