@@ -1,6 +1,6 @@
 package com.service.gallery.controller;
 
-import com.service.gallery.dto.Gallery;
+import com.service.gallery.dto.GalleryDto;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +24,10 @@ public class GalleryController {
     private String voucherServiceEndpoint;
 
     @GetMapping("/")
-    public ResponseEntity<Gallery> getVouchers(@RequestParam(value = "phonenumber", required = true) String phoneNumber){
-        Gallery gallery = new Gallery();
+    public ResponseEntity<GalleryDto> getVouchers(@RequestParam(value = "phonenumber", required = true) String phoneNumber){
+        GalleryDto gallery = new GalleryDto();
         try{
-            List<Object> vouchers = restTemplate.getForObject(voucherServiceEndpoint + "/vouchers?phonenumber=" + phoneNumber, List.class);
+            List<Object> vouchers = restTemplate.getForObject(voucherServiceEndpoint + "/" + phoneNumber, List.class);
             gallery.setPhoneNumber(phoneNumber);
             gallery.setVouchers(vouchers);
             gallery.setTotalVouchers(vouchers.size());
