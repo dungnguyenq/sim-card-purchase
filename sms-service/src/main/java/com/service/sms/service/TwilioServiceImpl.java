@@ -19,7 +19,7 @@ public class TwilioServiceImpl implements TwilioService {
     private String fromPhone;
 
     @Override
-    public String sendSMS(SmsDto data) throws Exception{
+    public String sendSMS(SmsDto data) {
         Twilio.init(accountSid, authToken);
         Message message = Message.creator(
                 new com.twilio.type.PhoneNumber(data.getPhoneNumberWithPlus()),
